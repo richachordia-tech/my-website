@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BetterBugs™ — Create precise bug reports with one-click</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Albert+Sans:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-base:#1c2221;
+  --bg-card:#181818;
+  --bg-card-2:#272d2c;
+  --bg-dark:#12312d;
+  --brand:#00da92;
+  --brand-dim:rgba(0,218,146,0.2);
+  --text-primary:#ffffff;
+  --text-secondary:rgba(255,255,255,0.5);
+  --text-muted:rgba(255,255,255,0.3);
+  --text-inverted:#0c0c0c;
+  --border-soft:rgba(255,255,255,0.09);
+  --border-mid:rgba(255,255,255,0.2);
+  --border-brand:rgba(0,218,146,0.2);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg-base);color:var(--text-primary);font-family:'Geist',sans-serif;overflow-x:hidden;line-height:1.5}
+
+/* ===== NAV ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:rgba(28,34,33,0.75);
+  border-bottom:1px solid var(--border-soft);
+  padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;color:#fff;text-decoration:none;letter-spacing:-0.3px}
+.nav-logo span{color:var(--brand)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-family:'Albert Sans',sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.75);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-links .has-arrow::after{content:'↓';margin-left:4px;font-size:11px;opacity:0.6}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.btn-login{font-family:'Albert Sans',sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.75);background:transparent;border:none;cursor:pointer;padding:8px 16px}
+.btn-cta{font-family:'Albert Sans',sans-serif;font-size:15px;font-weight:600;color:#000;background:var(--brand);border:none;border-radius:8px;padding:9px 18px;cursor:pointer;transition:opacity 0.2s;white-space:nowrap}
+.btn-cta:hover{opacity:0.9}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:22px;height:2px;background:#fff;border-radius:2px;transition:all 0.3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(18,22,21,0.98);backdrop-filter:blur(20px);padding:24px;flex-direction:column;gap:20px;z-index:99;border-bottom:1px solid var(--border-soft)}
+.mobile-menu a{font-family:'Albert Sans',sans-serif;font-size:16px;color:rgba(255,255,255,0.8);text-decoration:none;padding:8px 0;border-bottom:1px solid var(--border-soft)}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:120px 40px 80px;
+  position:relative;overflow:hidden;
+}
+.hero-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:800px;height:800px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,218,146,0.12) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,218,146,0.1);border:1px solid var(--brand-dim);
+  border-radius:100px;padding:6px 14px;margin-bottom:28px;
+  font-family:'Albert Sans',sans-serif;font-size:13px;color:var(--brand);letter-spacing:0.5px;
+  animation:fadeUp 0.6s ease both;
+}
+.hero-badge::before{content:'✦';font-size:10px}
+.hero h1{
+  font-family:'Nanum Myeongjo',serif;font-size:clamp(36px,5vw,64px);font-weight:700;
+  line-height:1.18;letter-spacing:-0.5px;
+  max-width:680px;margin-bottom:24px;
+  animation:fadeUp 0.7s 0.1s ease both;
+}
+.hero-sub{
+  font-family:'Albert Sans',sans-serif;font-size:18px;color:var(--text-secondary);
+  max-width:460px;margin-bottom:36px;line-height:1.65;
+  animation:fadeUp 0.7s 0.2s ease both;
+}
+.hero-cta-row{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp 0.7s 0.3s ease both;
+}
+.hero-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#fff;color:#000;
+  font-family:'Albert Sans',sans-serif;font-weight:600;font-size:16px;
+  border:none;border-radius:10px;padding:13px 24px;cursor:pointer;
+  transition:transform 0.2s,box-shadow 0.2s;
+  text-decoration:none;
+}
+.hero-btn:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,218,146,0.25)}
+.hero-btn .chrome-icon{width:22px;height:22px}
+.hero-btn .free-badge{background:var(--brand);color:#000;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:0.5px}
+.hero-secondary{font-family:'Albert Sans',sans-serif;font-size:14px;color:var(--text-secondary)}
+.hero-mockup{
+  margin-top:52px;position:relative;
+  animation:fadeUp 0.8s 0.4s ease both;
+}
+.hero-mockup-card{
+  background:rgba(28,34,33,0.9);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:20px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 40px 120px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.05);
+  width:min(560px,90vw);
+}
+.mockup-header{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  background:rgba(255,255,255,0.04);border-radius:10px;margin-bottom:16px;
+}
+.mockup-tabs{display:flex;gap:6px}
+.mockup-tab{
+  font-family:'Inter',sans-serif;font-size:12px;padding:5px 12px;border-radius:6px;
+  color:rgba(255,255,255,0.5);cursor:pointer;
+}
+.mockup-tab.active{background:rgba(0,218,146,0.15);color:var(--brand);border:1px solid var(--brand-dim)}
+.mockup-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.mockup-option{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:8px;padding:12px;cursor:pointer;transition:all 0.2s;
+  font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.6);
+}
+.mockup-option.active{
+  background:linear-gradient(135deg,rgba(0,218,146,0.15),rgba(0,218,146,0.05));
+  border-color:var(--brand-dim);color:#fff;
+}
+.mockup-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:8px;
+  font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.5);
+}
+.mockup-record-btn{
+  background:linear-gradient(90deg,rgba(0,218,146,0.5),rgba(102,255,178,0.5));
+  color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  border:none;border-radius:6px;padding:7px 16px;cursor:pointer;
+  box-shadow:3px 5px 18px rgba(37,231,157,0.28);
+}
+
+/* ===== TICKER ===== */
+.ticker-section{padding:32px 0;border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);overflow:hidden}
+.ticker-label{text-align:center;font-family:'Albert Sans',sans-serif;font-size:13px;color:var(--text-secondary);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:24px}
+.ticker-track{display:flex;gap:48px;animation:ticker 28s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+.ticker-item{
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+  font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;
+  color:rgba(255,255,255,0.55);white-space:nowrap;
+}
+.ticker-icon{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:16px}
+.ticker-wrap{position:relative;overflow:hidden}
+.ticker-fade-l{position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(to right,var(--bg-base),transparent);z-index:1}
+.ticker-fade-r{position:absolute;right:0;top:0;bottom:0;width:80px;background:linear-gradient(to left,var(--bg-base),transparent);z-index:1}
+
+/* ===== PROBLEM ===== */
+.problem-section{background:#171d1c;padding:80px 40px;text-align:center}
+.problem-section h2{
+  font-family:'Albert Sans',sans-serif;font-size:clamp(24px,3.5vw,40px);
+  font-weight:400;line-height:1.3;max-width:680px;margin:0 auto;
+  color:#fff;
+}
+.problem-section h2 strong{font-weight:700;color:#fff}
+.problem-sub{font-family:'Geist',sans-serif;font-size:16px;color:var(--text-secondary);margin-top:20px}
+
+/* ===== FEATURES ===== */
+.features-section{padding:100px 40px}
+.section-title{
+  font-family:'Geist',sans-serif;font-size:14px;font-weight:500;
+  color:var(--brand);letter-spacing:1.8px;text-transform:uppercase;
+  text-align:center;margin-bottom:16px;
+}
+.section-heading{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,3.5vw,40px);
+  font-weight:500;color:#fff;text-align:center;margin-bottom:56px;
+  letter-spacing:0.02em;line-height:1.3;
+}
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  max-width:1160px;margin:0 auto;
+}
+.feature-card{
+  background:var(--bg-card-2);border:1px solid var(--border-soft);
+  border-radius:16px;padding:28px;overflow:hidden;position:relative;
+  transition:transform 0.3s,border-color 0.3s;
+  aspect-ratio:1;display:flex;flex-direction:column;
+}
+.feature-card:hover{transform:translateY(-4px);border-color:var(--border-brand)}
+.feature-card-label{
+  font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:500;
+  color:#fff;margin-bottom:10px;
+}
+.feature-card-sub{font-family:'Geist',sans-serif;font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px}
+/* Card 1 - Screen Record */
+.plugin-ui{
+  background:#1a1f1e;border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;flex:1;padding:14px;
+  font-family:'Inter',sans-serif;
+}
+.plugin-ui-tabs{display:flex;gap:6px;margin-bottom:12px}
+.plugin-ui-tab{font-size:11px;padding:5px 10px;border-radius:5px;color:rgba(255,255,255,0.4);cursor:pointer}
+.plugin-ui-tab.active{background:rgba(0,218,146,0.15);color:var(--brand);border:1px solid var(--brand-dim)}
+.plugin-ui-tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.plugin-tile{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px;font-size:11px;color:rgba(255,255,255,0.5)}
+.plugin-tile.active{background:linear-gradient(135deg,rgba(0,218,146,0.2),rgba(0,218,146,0.05));border-color:rgba(0,218,146,0.3);color:#fff}
+.plugin-tile .tile-icon{font-size:18px;margin-bottom:6px}
+/* Card 2 - Rewind */
+.rewind-visual{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
+.rewind-circles{position:relative;width:160px;height:160px}
+.rewind-circle{
+  position:absolute;border:1.5px solid rgba(0,136,91,0.35);border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.rewind-circle:nth-child(1){width:60px;height:60px;border-color:rgba(0,218,146,0.7)}
+.rewind-circle:nth-child(2){width:95px;height:95px;border-color:rgba(0,218,146,0.45)}
+.rewind-circle:nth-child(3){width:130px;height:130px;border-color:rgba(0,218,146,0.25)}
+.rewind-circle:nth-child(4){width:160px;height:160px;border-color:rgba(0,218,146,0.12)}
+.rewind-pill{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(90deg,rgba(0,218,146,0.4),rgba(0,218,146,0.2));
+  border:1px solid var(--brand-dim);border-radius:100px;padding:8px 18px;
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--brand);
+  white-space:nowrap;display:flex;align-items:center;gap:6px;
+}
+.rewind-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,0.6);text-align:center;
+}
+/* Card 3 - AI Steps */
+.timeline{display:flex;flex-direction:column;gap:10px;flex:1}
+.timeline-item{
+  display:flex;align-items:flex-start;gap:10px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;padding:9px 12px;
+}
+.timeline-time{font-family:'Inter',sans-serif;font-size:11px;color:var(--brand);min-width:36px;font-weight:500;margin-top:1px}
+.timeline-text{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.4}
+
+/* ===== INTEGRATIONS ===== */
+.integrations-section{padding:80px 40px;background:#171d1c}
+.integrations-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.integrations-left h2{
+  font-family:'Albert Sans',sans-serif;font-size:clamp(28px,3.5vw,44px);font-weight:400;
+  line-height:1.2;margin-bottom:16px;
+}
+.integrations-left h2 .animated-text{
+  display:inline-block;overflow:hidden;height:48px;vertical-align:bottom;
+}
+.animated-text-inner{display:flex;flex-direction:column;animation:slideText 6s infinite}
+.animated-text-inner p{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3.5vw,44px);font-weight:500;color:var(--brand);height:48px;line-height:48px;flex-shrink:0}
+.integrations-left p{font-family:'Geist',sans-serif;font-size:16px;color:var(--text-secondary);line-height:1.6;margin-bottom:28px}
+.integrations-grid{display:flex;flex-wrap:wrap;gap:12px}
+.integration-chip{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border-soft);
+  border-radius:8px;padding:8px 14px;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;color:#fff;
+  transition:border-color 0.2s;
+}
+.integration-chip:hover{border-color:var(--brand-dim)}
+.integration-chip .ic{width:20px;height:20px;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.integrations-right{position:relative}
+.finding-card{
+  background:linear-gradient(135deg,rgba(28,34,33,0.95),rgba(18,49,43,0.2));
+  border:1px solid var(--border-mid);border-radius:12px;padding:24px;
+}
+.finding-card-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:400;color:#fff;margin-bottom:6px}
+.finding-card-sub{font-family:'Geist',sans-serif;font-size:14px;color:var(--text-secondary);line-height:1.6}
+.chat-bubbles{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.chat-bubble{
+  display:inline-flex;align-items:center;gap:8px;max-width:fit-content;
+  background:rgba(137,137,137,0.06);border:0.5px solid rgba(255,255,255,0.09);
+  border-radius:14px;padding:9px 14px;
+  font-family:'Poppins',sans-serif;font-size:12px;color:rgba(255,255,255,0.5);
+  backdrop-filter:blur(36px);
+}
+.bubble-avatar{width:24px;height:24px;border-radius:50%;flex-shrink:0}
+
+/* ===== PURPOSE BUILT ===== */
+.purpose-section{padding:100px 40px}
+.purpose-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:300px 1fr;gap:80px;align-items:center}
+.role-tabs{display:flex;flex-direction:column;gap:24px;border-left:1px solid rgba(255,255,255,0.15);padding-left:20px}
+.role-tab{
+  font-family:'Geist',sans-serif;font-size:22px;font-weight:400;
+  color:rgba(255,255,255,0.4);cursor:pointer;transition:color 0.2s;
+  letter-spacing:0.02em;
+}
+.role-tab.active{color:#fff}
+.role-tab.active~.role-tab{color:rgba(255,255,255,0.4)}
+.role-cards{position:relative;height:360px}
+.role-card-stack{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.role-card{
+  position:absolute;
+  background:linear-gradient(123deg,#1c2221 1.8%,rgba(18,49,43,0.05) 97%),linear-gradient(90deg,#1c2221,#1c2221);
+  border:1px solid var(--brand-dim);border-radius:12px;padding:28px 32px;
+  width:100%;max-width:520px;
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s;
+}
+.role-card:nth-child(1){transform:rotate(-7deg) translateY(20px);opacity:0.4;z-index:1}
+.role-card:nth-child(2){transform:rotate(0deg);opacity:1;z-index:2}
+.role-card:nth-child(3){transform:rotate(7deg) translateY(20px);opacity:0.4;z-index:1}
+.role-card-title{
+  font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:400;
+  text-decoration:underline;text-transform:uppercase;letter-spacing:0.02em;
+  color:#fff;margin-bottom:12px;
+}
+.role-card-desc{
+  font-family:'Geist',sans-serif;font-size:16px;font-weight:300;
+  color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:16px;
+}
+.role-card ul{
+  list-style:disc;padding-left:20px;
+  font-family:'Geist',sans-serif;font-size:16px;font-weight:300;
+  color:rgba(255,255,255,0.5);line-height:2;
+}
+.role-card-cta{
+  display:inline-flex;align-items:center;gap:6px;margin-top:16px;
+  background:rgba(28,34,33,0.8);border:1px solid rgba(255,255,255,0.2);
+  border-radius:8px;padding:8px 16px;
+  font-family:'Geist',sans-serif;font-size:14px;color:#fff;cursor:pointer;
+  transition:border-color 0.2s;text-decoration:none;
+}
+.role-card-cta:hover{border-color:var(--brand)}
+
+/* ===== COMPLIANCE ===== */
+.compliance-section{padding:100px 40px;overflow:hidden}
+.compliance-inner{max-width:1160px;margin:0 auto}
+.compliance-header{text-align:center;margin-bottom:60px}
+.compliance-header .eyebrow{font-family:'Geist',sans-serif;font-size:14px;font-weight:500;color:#47deac;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.compliance-header h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:500;color:#fff;letter-spacing:0.01em}
+.compliance-card{
+  position:relative;border-radius:20px;overflow:hidden;
+  background:rgba(18,49,43,0.3);border:1px solid rgba(255,255,255,0.1);
+}
+.compliance-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.3),rgba(18,49,43,0.5));
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px;opacity:0.25;
+}
+.compliance-bg-img{background:rgba(0,218,146,0.1);border-radius:8px}
+.compliance-content{position:relative;z-index:1;padding:60px 40px;text-align:center}
+.compliance-stat{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(60px,8vw,96px);
+  font-weight:700;color:var(--brand);line-height:1;margin-bottom:0;
+  letter-spacing:-2px;
+}
+.compliance-stat-label{
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,40px);
+  font-weight:700;color:#fff;letter-spacing:2px;margin-bottom:32px;
+}
+.compliance-badges{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.compliance-badge{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
+  border-radius:12px;padding:12px 20px;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;color:#fff;
+}
+.badge-icon{width:32px;height:32px;background:var(--brand);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000}
+
+/* ===== FOUNDERS ===== */
+.founders-section{padding:100px 40px;background:#171d1c}
+.founders-inner{max-width:1160px;margin:0 auto}
+.founders-header{text-align:center;margin-bottom:52px}
+.founders-header .eyebrow{font-family:'Geist',sans-serif;font-size:13px;color:var(--text-secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.founders-header h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3vw,36px);font-weight:500;color:#fff;line-height:1.3}
+.founders-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
+.founder-card{
+  background:linear-gradient(123.44deg,#000,rgba(18,49,43,0.05));
+  border:1px solid var(--border-mid);border-radius:8px;padding:28px;
+}
+.founder-card-quote{
+  font-family:'Geist',sans-serif;font-size:16px;font-weight:400;
+  color:rgba(255,255,255,0.8);line-height:1.7;margin-bottom:24px;
+  font-style:italic;
+}
+.founder-card-quote::before{content:'"';color:var(--brand);font-size:24px;line-height:1}
+.founder-card-quote::after{content:'"';color:var(--brand);font-size:24px;line-height:1}
+.founder-info{display:flex;align-items:center;gap:12px}
+.founder-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--brand),rgba(0,218,146,0.4));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:#000;flex-shrink:0}
+.founder-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;color:#fff}
+.founder-role{font-family:'Geist',sans-serif;font-size:13px;color:var(--text-secondary)}
+.founders-link{
+  display:flex;justify-content:center;
+  font-family:'Geist',sans-serif;font-size:16px;color:#fff;
+  text-decoration:underline;text-underline-offset:3px;
+  cursor:pointer;transition:color 0.2s;
+}
+.founders-link:hover{color:var(--brand)}
+
+/* ===== TESTIMONIALS ===== */
+.testimonials-section{padding:100px 40px;overflow:hidden}
+.testimonials-header{text-align:center;margin-bottom:52px}
+.testimonials-header .eyebrow{font-family:'Geist',sans-serif;font-size:13px;font-weight:500;color:var(--text-secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.testimonials-header h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3vw,36px);font-weight:500;color:#fff;line-height:1.4;max-width:500px;margin:0 auto}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1160px;margin:0 auto;position:relative;max-height:441px;overflow:hidden}
+.testimonials-grid::after{content:'';position:absolute;left:0;right:0;bottom:0;height:140px;background:linear-gradient(transparent,var(--bg-base));pointer-events:none;z-index:2}
+.testimonial-col{display:flex;flex-direction:column;gap:15.68px}
+.testimonial-col:nth-child(2){margin-top:-24px}
+.testimonial-col:nth-child(3){margin-top:16px}
+.testimonial-card{
+  background:#181818;border:0.98px solid #292929;
+  border-radius:23.52px;padding:15.68px;
+  flex-shrink:0;
+}
+.testimonial-text{font-family:'Poppins',sans-serif;font-size:13.72px;line-height:1.7;color:#fff;margin-bottom:12px;letter-spacing:0.03px}
+.testimonial-author{display:flex;align-items:center;gap:8px}
+.testimonial-handle{font-family:'Poppins',sans-serif;font-size:13px;color:rgba(255,255,255,0.4)}
+.testimonial-stars{color:var(--brand);font-size:12px;letter-spacing:1px}
+.testimonial-name{font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;color:#fff}
+.tweet-card{background:#181818;border-radius:23.52px;padding:15.68px;border:0.98px solid #292929}
+.tweet-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.tweet-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1d9bf0,#0d6efd);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.tweet-user{flex:1}
+.tweet-username{font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;color:#fff}
+.tweet-handle{font-family:'Poppins',sans-serif;font-size:12px;color:rgba(255,255,255,0.4)}
+.tweet-bird{color:#1d9bf0;font-size:16px}
+.tweet-body{font-family:'Poppins',sans-serif;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:8px}
+.tweet-time{font-family:'Poppins',sans-serif;font-size:11px;color:rgba(255,255,255,0.3)}
+
+/* ===== FAQ ===== */
+.faq-section{padding:100px 40px;background:#171d1c}
+.faq-inner{max-width:780px;margin:0 auto}
+.faq-header{text-align:center;margin-bottom:52px}
+.faq-header .eyebrow{font-family:'Geist',sans-serif;font-size:13px;color:var(--text-secondary);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.faq-header h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3vw,36px);font-weight:500;color:#fff}
+.faq-list{display:flex;flex-direction:column;gap:12px}
+.faq-item{
+  background:linear-gradient(123deg,rgba(0,0,0,0.8),rgba(18,49,43,0.05));
+  border:1px solid var(--border-mid);border-radius:8px;overflow:hidden;
+  cursor:pointer;transition:border-color 0.2s;
+}
+.faq-item:hover{border-color:var(--brand-dim)}
+.faq-header-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;gap:16px;
+}
+.faq-q{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:500;color:#fff}
+.faq-arrow{color:rgba(255,255,255,0.5);font-size:18px;transition:transform 0.3s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg);color:var(--brand)}
+.faq-body{
+  max-height:0;overflow:hidden;transition:max-height 0.4s ease;
+  font-family:'Geist',sans-serif;font-size:15px;color:var(--text-secondary);line-height:1.7;
+}
+.faq-body-inner{padding:0 24px 20px}
+.faq-item.open .faq-body{max-height:200px}
+
+/* ===== FINAL CTA ===== */
+.cta-section{
+  padding:100px 40px;text-align:center;
+  background:linear-gradient(to bottom,var(--bg-base),rgba(18,49,43,0.3));
+  position:relative;overflow:hidden;
+}
+.cta-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:600px;height:300px;
+  background:radial-gradient(ellipse,rgba(0,218,146,0.08),transparent 65%);
+  pointer-events:none;
+}
+.cta-eyebrow{
+  font-family:'Albert Sans',sans-serif;font-size:13px;font-weight:400;
+  color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:32px;
+}
+.cta-ph-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(28,34,33,0.8);border:1px solid rgba(255,255,255,0.45);
+  border-radius:10px;padding:10px 18px;margin-bottom:36px;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;color:#fff;
+  flex-wrap:wrap;justify-content:center;
+}
+.ph-sep{opacity:0.3}
+.ph-upvote{color:#ff6154;font-size:12px}
+.ph-count{color:#ff6154;font-weight:700}
+.cta-main-btn{
+  display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+  background:rgba(18,49,45,0.8);border:0.5px solid rgba(255,255,255,0.5);
+  border-radius:18px;padding:18px 32px;cursor:pointer;
+  font-family:'Albert Sans',sans-serif;font-size:22px;font-weight:600;color:#fff;
+  transition:border-color 0.2s,transform 0.2s;text-decoration:none;
+}
+.cta-main-btn:hover{border-color:var(--brand);transform:translateY(-2px)}
+.cta-kbd{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  border-radius:6px;padding:4px 10px;
+  font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.6);
+}
+
+/* ===== FOOTER ===== */
+footer{
+  background:rgba(18,49,43,0.5);
+  border-top:1px solid var(--border-soft);
+  padding:64px 40px 40px;
+}
+.footer-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:60px}
+.footer-brand{}
+.footer-logo{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;color:#fff;margin-bottom:12px}
+.footer-logo span{color:var(--brand)}
+.footer-tagline{font-family:'Geist',sans-serif;font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px}
+.footer-status{display:flex;align-items:center;gap:8px;font-family:'Geist',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:8px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#00da92;box-shadow:0 0 6px rgba(0,218,146,0.6);flex-shrink:0}
+.footer-copy{font-family:'Geist',sans-serif;font-size:12px;color:var(--text-muted)}
+.footer-links{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+.footer-col-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#fff;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:16px}
+.footer-col a{display:block;font-family:'Geist',sans-serif;font-size:14px;color:var(--text-secondary);text-decoration:none;margin-bottom:10px;transition:color 0.2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{max-width:1160px;margin:40px auto 0;padding-top:24px;border-top:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+.footer-compliance-row{display:flex;gap:12px;align-items:center}
+.footer-badge{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.5px}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes slideText{0%,20%{transform:translateY(0)}25%,45%{transform:translateY(-48px)}50%,70%{transform:translateY(-96px)}75%,95%{transform:translateY(-144px)}100%{transform:translateY(-192px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1100px){
+  .features-grid{grid-template-columns:1fr 1fr;gap:16px}
+  .purpose-inner{gap:40px}
+  .founders-grid{gap:16px}
+}
+@media(max-width:900px){
+  nav{padding:0 24px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .hero{padding:100px 24px 60px}
+  .features-grid{grid-template-columns:1fr}
+  .features-section{padding:72px 24px}
+  .integrations-inner{grid-template-columns:1fr;gap:40px}
+  .integrations-section{padding:72px 24px}
+  .purpose-inner{grid-template-columns:1fr;gap:40px}
+  .purpose-section{padding:72px 24px}
+  .role-tabs{flex-direction:row;flex-wrap:wrap;border-left:none;border-bottom:1px solid rgba(255,255,255,0.15);padding-left:0;padding-bottom:16px;gap:16px}
+  .role-tab{font-size:16px}
+  .role-cards{height:320px}
+  .compliance-section{padding:72px 24px}
+  .founders-grid{grid-template-columns:1fr}
+  .founders-section{padding:72px 24px}
+  .testimonials-grid{grid-template-columns:1fr 1fr;max-height:500px}
+  .testimonials-col:last-child{display:none}
+  .testimonials-section{padding:72px 24px}
+  .faq-section{padding:72px 24px}
+  .cta-section{padding:72px 24px}
+  footer{padding:48px 24px 32px}
+  .footer-inner{grid-template-columns:1fr;gap:40px}
+  .footer-links{grid-template-columns:1fr 1fr;gap:24px}
+}
+@media(max-width:600px){
+  .testimonials-grid{grid-template-columns:1fr;max-height:400px}
+  .testimonial-col:nth-child(2),.testimonial-col:nth-child(3){display:none}
+  .footer-links{grid-template-columns:1fr 1fr}
+  .hero h1{font-size:32px}
+  .role-card{padding:20px 22px}
+  .compliance-stat{font-size:52px}
+  .founders-grid{gap:12px}
+  .footer-inner{gap:32px}
+}
+@media(max-width:480px){
+  .cta-main-btn{font-size:18px;padding:16px 22px}
+  .hero-btn{font-size:15px;padding:11px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">BetterBugs<span>™</span></a>
+  <div class="nav-links">
+    <a href="#" class="has-arrow">Solutions</a>
+    <a href="#" class="has-arrow">Integrations</a>
+    <a href="#">Pricing</a>
+    <a href="#">Docs</a>
+    <a href="#">Blogs</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-login">Log In</button>
+    <button class="btn-cta">Add to Chrome</button>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#">Solutions</a>
+  <a href="#">Integrations</a>
+  <a href="#">Pricing</a>
+  <a href="#">Docs</a>
+  <a href="#">Blogs</a>
+  <button class="btn-cta" style="width:100%;margin-top:8px">Add to Chrome</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-badge">Now with AI-powered reproduction steps</div>
+  <h1>Create precise bug reports with one-click</h1>
+  <p class="hero-sub">Stop wasting time writing bug reports. Capture, annotate, and share with your team in seconds.</p>
+  <div class="hero-cta-row">
+    <a href="#" class="hero-btn">
+      <svg class="chrome-icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#4285F4" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="4" fill="#4285F4"/>
+        <path d="M12 8h8.7M3.3 14l4.35-7.5M3.3 10l4.35 7.5" stroke="#4285F4" stroke-width="1.5"/>
+      </svg>
+      Add to Chrome
+      <span class="free-badge">FREE</span>
+    </a>
+  </div>
+  <div class="hero-mockup">
+    <div class="hero-mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-tabs">
+          <span class="mockup-tab active">Screenshot</span>
+          <span class="mockup-tab">Screen Record</span>
+        </div>
+      </div>
+      <div class="mockup-options">
+        <div class="mockup-option active">
+          <div style="font-size:18px;margin-bottom:6px">🖥️</div>
+          Current Tab
+        </div>
+        <div class="mockup-option">
+          <div style="font-size:18px;margin-bottom:6px">⬜</div>
+          Entire Window
+        </div>
+        <div class="mockup-option">
+          <div style="font-size:18px;margin-bottom:6px">📍</div>
+          Custom Area
+        </div>
+        <div class="mockup-option">
+          <div style="font-size:18px;margin-bottom:6px">📱</div>
+          Element
+        </div>
+      </div>
+      <div class="mockup-footer">
+        <span>betterbugs.ai</span>
+        <button class="mockup-record-btn">Start Recording</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-section">
+  <div class="ticker-label">Works with your favorite tools</div>
+  <div class="ticker-wrap">
+    <div class="ticker-fade-l"></div>
+    <div class="ticker-fade-r"></div>
+    <div class="ticker-track" id="ticker">
+      <div class="ticker-item"><div class="ticker-icon">🔵</div>Jira</div>
+      <div class="ticker-item"><div class="ticker-icon">💬</div>Slack</div>
+      <div class="ticker-item"><div class="ticker-icon">📐</div>Linear</div>
+      <div class="ticker-item"><div class="ticker-icon">✅</div>Asana</div>
+      <div class="ticker-item"><div class="ticker-icon">🔷</div>Atlassian</div>
+      <div class="ticker-item"><div class="ticker-icon">🟣</div>ClickUp</div>
+      <div class="ticker-item"><div class="ticker-icon">🔵</div>Azure Boards</div>
+      <div class="ticker-item"><div class="ticker-icon">⚫</div>GitHub</div>
+      <div class="ticker-item"><div class="ticker-icon">🟢</div>Saleshandy</div>
+      <!-- duplicate for infinite scroll -->
+      <div class="ticker-item"><div class="ticker-icon">🔵</div>Jira</div>
+      <div class="ticker-item"><div class="ticker-icon">💬</div>Slack</div>
+      <div class="ticker-item"><div class="ticker-icon">📐</div>Linear</div>
+      <div class="ticker-item"><div class="ticker-icon">✅</div>Asana</div>
+      <div class="ticker-item"><div class="ticker-icon">🔷</div>Atlassian</div>
+      <div class="ticker-item"><div class="ticker-icon">🟣</div>ClickUp</div>
+      <div class="ticker-item"><div class="ticker-icon">🔵</div>Azure Boards</div>
+      <div class="ticker-item"><div class="ticker-icon">⚫</div>GitHub</div>
+      <div class="ticker-item"><div class="ticker-icon">🟢</div>Saleshandy</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-section reveal">
+  <h2>Your team spends <strong>2 days discussing bugs</strong>, 30 minutes fixing them</h2>
+  <p class="problem-sub">BetterBugs eliminates the back-and-forth. Every bug report is complete, clear, and actionable.</p>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <p class="section-title reveal">Finding the bug and managing it</p>
+  <h2 class="section-heading reveal">Everything you need to report bugs faster</h2>
+  <div class="features-grid">
+    <!-- Card 1 -->
+    <div class="feature-card reveal">
+      <div class="feature-card-label">Screen Record</div>
+      <div class="feature-card-sub">Capture exactly what's happening with one click</div>
+      <div class="plugin-ui">
+        <div class="plugin-ui-tabs">
+          <span class="plugin-ui-tab active">Screenshot</span>
+          <span class="plugin-ui-tab">Screen Record</span>
+        </div>
+        <div class="plugin-ui-tiles">
+          <div class="plugin-tile active"><div class="tile-icon">🖥️</div>Current Tab</div>
+          <div class="plugin-tile"><div class="tile-icon">⬜</div>Entire Window</div>
+          <div class="plugin-tile"><div class="tile-icon">📍</div>Custom Area</div>
+          <div class="plugin-tile"><div class="tile-icon">🔲</div>Element Only</div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="feature-card reveal">
+      <div class="feature-card-label">Rewind up to 2 mins</div>
+      <div class="feature-card-sub">Missed the bug? Rewind and capture what happened before</div>
+      <div class="rewind-visual">
+        <div class="rewind-circles">
+          <div class="rewind-circle"></div>
+          <div class="rewind-circle"></div>
+          <div class="rewind-circle"></div>
+          <div class="rewind-circle"></div>
+          <div class="rewind-center">⏪<br/><span style="font-size:10px;color:var(--brand)">Rewind</span></div>
+        </div>
+        <div class="rewind-pill">⏪ 2 mins</div>
+      </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="feature-card reveal">
+      <div class="feature-card-label">AI-written reproduction steps</div>
+      <div class="feature-card-sub">AI automatically generates step-by-step reproduction instructions</div>
+      <div class="timeline">
+        <div class="timeline-item"><span class="timeline-time">0:00</span><span class="timeline-text">Started Recording</span></div>
+        <div class="timeline-item"><span class="timeline-time">0:01</span><span class="timeline-text">Pressed ⌘K</span></div>
+        <div class="timeline-item"><span class="timeline-time">0:04</span><span class="timeline-text">Typed "Find me all the bugs..."</span></div>
+        <div class="timeline-item"><span class="timeline-time">0:11</span><span class="timeline-text">Navigated to betterbugs.ai/library</span></div>
+        <div class="timeline-item"><span class="timeline-time">0:20</span><span class="timeline-text">Navigated to betterbugs.ai/recordings</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section class="integrations-section">
+  <div class="integrations-inner">
+    <div class="integrations-left reveal">
+      <h2>
+        Use BetterBugs with
+        <div class="animated-text">
+          <div class="animated-text-inner">
+            <p>Jira</p><p>Asana</p><p>Notion</p><p>Slack</p><p>Jira</p>
+          </div>
+        </div>
+      </h2>
+      <p>Seamlessly integrate with the tools your team already uses. Push bug reports directly into your workflow without switching context.</p>
+      <div class="integrations-grid">
+        <div class="integration-chip"><div class="ic" style="color:#0052cc">J</div>Jira</div>
+        <div class="integration-chip"><div class="ic" style="color:#e01e5a">S</div>Slack</div>
+        <div class="integration-chip"><div class="ic" style="color:#5e6ad2">L</div>Linear</div>
+        <div class="integration-chip"><div class="ic" style="color:#fc3d2e">A</div>Asana</div>
+        <div class="integration-chip"><div class="ic" style="color:#17cf97">N</div>Notion</div>
+        <div class="integration-chip"><div class="ic" style="color:#0078d4">Az</div>Azure</div>
+        <div class="integration-chip"><div class="ic" style="color:#171515">G</div>GitHub</div>
+        <div class="integration-chip"><div class="ic" style="color:#7b68ee">C</div>ClickUp</div>
+      </div>
+    </div>
+    <div class="integrations-right reveal">
+      <div class="finding-card">
+        <div class="finding-card-title">Linear, Jira, Asana..</div>
+        <div class="finding-card-sub">Build multiplayer experiences with real-time data synchronization</div>
+        <div class="chat-bubbles">
+          <div class="chat-bubble">
+            <div class="bubble-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0">A</div>
+            can you clear the cache and try again?
+          </div>
+          <div class="chat-bubble" style="margin-left:auto">
+            <div class="bubble-avatar" style="background:linear-gradient(135deg,#f093fb,#f5576c);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0">B</div>
+            This bug seems to be a user error.
+          </div>
+          <div class="chat-bubble">
+            <div class="bubble-avatar" style="background:linear-gradient(135deg,var(--brand),#00885b);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;flex-shrink:0">C</div>
+            Is this backend or frontend bug?
+          </div>
+          <div class="chat-bubble" style="margin-left:auto">
+            <div class="bubble-avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0">D</div>
+            UI looks broken here
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PURPOSE BUILT -->
+<section class="purpose-section">
+  <p class="section-title reveal">Built for everyone</p>
+  <h2 class="section-heading reveal">Purpose-built for your entire team</h2>
+  <div class="purpose-inner">
+    <div class="role-tabs reveal" id="roleTabs">
+      <div class="role-tab active" onclick="setRole(0)">Founders &amp; Managers</div>
+      <div class="role-tab" onclick="setRole(1)">Software Developers</div>
+      <div class="role-tab" onclick="setRole(2)">Quality Engineers</div>
+      <div class="role-tab" onclick="setRole(3)">UI/UX Designers</div>
+      <div class="role-tab" onclick="setRole(4)">Support Teams</div>
+    </div>
+    <div class="role-cards reveal" id="roleCards">
+      <div class="role-card-stack">
+        <div class="role-card" style="transform:rotate(-7deg) translateY(20px);opacity:0.35;z-index:1">
+          <div class="role-card-title">Quality Engineers</div>
+          <div class="role-card-desc">Streamline your QA process with automated bug capture.</div>
+        </div>
+        <div class="role-card" id="activeCard">
+          <div class="role-card-title" id="rcTitle">Founders</div>
+          <div class="role-card-desc" id="rcDesc">Get full visibility into product quality. Make data-driven decisions on what to fix first.</div>
+          <ul id="rcList">
+            <li>Faster Product Iteration</li>
+            <li>Clarity on What's Broken</li>
+            <li>Prioritize issues based on impact</li>
+          </ul>
+          <a href="#" class="role-card-cta">Know More →</a>
+        </div>
+        <div class="role-card" style="transform:rotate(7deg) translateY(20px);opacity:0.35;z-index:1">
+          <div class="role-card-title">Support Teams</div>
+          <div class="role-card-desc">Help customers faster with precise bug documentation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section class="compliance-section">
+  <div class="compliance-inner">
+    <div class="compliance-header reveal">
+      <p class="eyebrow">Enterprise grade security</p>
+      <h2>Your data, bugs &amp; users are safe with us</h2>
+    </div>
+    <div class="compliance-card reveal">
+      <div class="compliance-bg">
+        <div class="compliance-bg-img"></div>
+        <div class="compliance-bg-img"></div>
+        <div class="compliance-bg-img"></div>
+        <div class="compliance-bg-img"></div>
+      </div>
+      <div class="compliance-content">
+        <div class="compliance-stat">1,15,456+</div>
+        <div class="compliance-stat-label">BUGS REPORTED</div>
+        <div class="compliance-badges">
+          <div class="compliance-badge"><div class="badge-icon">S2</div>SOC2 Type II</div>
+          <div class="compliance-badge"><div class="badge-icon">🔒</div>ISO 27001</div>
+          <div class="compliance-badge"><div class="badge-icon">🛡️</div>GDPR Compliant</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDERS -->
+<section class="founders-section">
+  <div class="founders-inner">
+    <div class="founders-header reveal">
+      <p class="eyebrow">Our clients love us</p>
+      <h2>Founders sharing their experience with Better Bugs</h2>
+    </div>
+    <div class="founders-grid">
+      <div class="founder-card reveal">
+        <p class="founder-card-quote">BetterBugs has helped us reach new productivity levels. We have been saving massive time using it.</p>
+        <div class="founder-info">
+          <div class="founder-avatar">D</div>
+          <div>
+            <div class="founder-name">Dhruv Patel</div>
+            <div class="founder-role">Founder, Saleshandy</div>
+          </div>
+        </div>
+      </div>
+      <div class="founder-card reveal">
+        <p class="founder-card-quote">Using BetterBugs has drastically trimmed down our dependency on complex and messy ways to point out errors.</p>
+        <div class="founder-info">
+          <div class="founder-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2)">U</div>
+          <div>
+            <div class="founder-name">Uri Sevilla</div>
+            <div class="founder-role">CTO, Nevvon</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="founders-link reveal" href="#">Explore our Pricing for your team →</a>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="testimonials-header reveal">
+    <p class="eyebrow">Wall of Love</p>
+    <h2>Every user review matters to every one on our team.</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-col">
+      <div class="testimonial-card">
+        <p class="testimonial-text">As a developer, one of the most frustrating issues I come across is web debugging. This looks like a huge time-saver and great QA management tool. Awesome launch!</p>
+        <div class="testimonial-author">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f093fb,#f5576c);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">A</div>
+          <span class="testimonial-handle">@arivers</span>
+          <span class="testimonial-name" style="color:rgba(255,255,255,0.6);font-size:11px">Andrew Rivers</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">Incredible tool for our QA team. The AI-generated reproduction steps save us hours every week. Highly recommend to any dev team.</p>
+        <div class="testimonial-author">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#00885b);display:flex;align-items:center;justify-content:center;font-size:12px;color:#000;flex-shrink:0">S</div>
+          <span class="testimonial-name">Sidharth Shukla</span>
+        </div>
+      </div>
+      <div class="tweet-card">
+        <div class="tweet-header">
+          <div class="tweet-avatar">R</div>
+          <div class="tweet-user">
+            <div class="tweet-username">Rahul Parwal</div>
+            <div class="tweet-handle">@rahulparwal</div>
+          </div>
+          <span class="tweet-bird">𝕏</span>
+        </div>
+        <p class="tweet-body">Just discovered @BetterBugs and it's exactly what our team needed. Bug reports are now crystal clear and actionable. No more back-and-forth! 🐛✨</p>
+        <p class="tweet-time">2:34 PM · Nov 12, 2024</p>
+      </div>
+    </div>
+    <div class="testimonial-col">
+      <div class="testimonial-card">
+        <p class="testimonial-text">The rewind feature is a game changer. No more "I can't reproduce this" conversations. Just rewind and capture exactly what happened.</p>
+        <div class="testimonial-author">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4facfe,#00f2fe);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">M</div>
+          <span class="testimonial-handle">@maxcompe</span>
+          <span class="testimonial-name" style="color:rgba(255,255,255,0.6);font-size:11px">Max Comperatore</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">Our entire development cycle got faster. Developers spend less time asking clarifying questions and more time fixing actual bugs.</p>
+        <div class="testimonial-author">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">P</div>
+          <span class="testimonial-name">Priya Mehta</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">BetterBugs integrates perfectly with our Linear workflow. One click and the bug report is right in our sprint. Incredible product!</p>
+        <div class="testimonial-author">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#f7971e,#ffd200);display:flex;align-items:center;justify-content:center;font-size:12px;color:#000;flex-shrink:0">L</div>
+          <span class="testimonial-handle">@llfearless619</span>
+          <span class="testimonial-name" style="color:rgba(255,255,255,0.6);font-size:11px">Leo Liu</span>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-col">
+      <div class="tweet-card">
+        <div class="tweet-header">
+          <div class="tweet-avatar" style="background:linear-gradient(135deg,#f7971e,#ffd200);color:#000">K</div>
+          <div class="tweet-user">
+            <div class="tweet-username">Karan Shah</div>
+            <div class="tweet-handle">@karanshah_dev</div>
+          </div>
+          <span class="tweet-bird">𝕏</span>
+        </div>
+        <p class="tweet-body">Tried @BetterBugs for the first time today. The AI-written reproduction steps are actually magical. This is how bug reporting should work.</p>
+        <p class="tweet-time">11:15 AM · Oct 30, 2024</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">I've tried every bug tracking tool out there. Nothing comes close to BetterBugs for ease of use and the quality of reports it generates.</p>
+        <div class="testimonial-author">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#e0c3fc,#8ec5fc);display:flex;align-items:center;justify-content:center;font-size:12px;color:#333;flex-shrink:0">T</div>
+          <span class="testimonial-name">Tanisha Roy</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">Our support team uses BetterBugs to capture customer issues live. The screen recording with automatic annotations cuts resolution time in half.</p>
+        <div class="testimonial-author">
+          <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a8edea,#fed6e3);display:flex;align-items:center;justify-content:center;font-size:12px;color:#333;flex-shrink:0">V</div>
+          <span class="testimonial-name">Vikram Nair</span>
+          <span class="testimonial-handle" style="font-size:11px">@vnair_pm</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-header reveal">
+      <p class="eyebrow">Let us help you</p>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item open" onclick="toggleFaq(this)">
+        <div class="faq-header-row">
+          <span class="faq-q">What payment methods do you accept?</span>
+          <span class="faq-arrow">↓</span>
+        </div>
+        <div class="faq-body"><div class="faq-body-inner">Currently, we accept Credit Cards, Debit Cards, and Net Banking payment methods. All transactions are secured with industry-standard encryption.</div></div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-header-row">
+          <span class="faq-q">Do you offer discounts for annual subscriptions?</span>
+          <span class="faq-arrow">↓</span>
+        </div>
+        <div class="faq-body"><div class="faq-body-inner">Yes! We offer up to 30% discount on annual plans compared to monthly billing. You'll also get priority support and early access to new features.</div></div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-header-row">
+          <span class="faq-q">Can I change my existing plan?</span>
+          <span class="faq-arrow">↓</span>
+        </div>
+        <div class="faq-body"><div class="faq-body-inner">Absolutely. You can upgrade or downgrade your plan at any time from your account settings. Changes take effect at the start of your next billing cycle.</div></div>
+      </div>
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-header-row">
+          <span class="faq-q">Is there a minimum contract period?</span>
+          <span class="faq-arrow">↓</span>
+        </div>
+        <div class="faq-body"><div class="faq-body-inner">No minimum contract! Our monthly plans are completely flexible. Annual plans are billed annually but you can cancel anytime and we'll prorate the refund.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <p class="cta-eyebrow reveal">DON'T WAIT! START REPORTING BUGS NOW</p>
+  <div class="cta-ph-badge reveal">
+    <span>FEATURED ON</span>
+    <span class="ph-sep">|</span>
+    <span>🐱 Product Hunt</span>
+    <span class="ph-sep">|</span>
+    <span class="ph-upvote">▲</span>
+    <span class="ph-count">511</span>
+  </div>
+  <br/>
+  <a href="#" class="cta-main-btn reveal">
+    Report a bug in &lt; 2mins
+    <span class="cta-kbd">⌘K</span>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">BetterBugs<span>™</span></div>
+      <p class="footer-tagline">Every bug, well documented &amp; ready to be resolved</p>
+      <div class="footer-status"><div class="status-dot"></div>All services are online</div>
+      <p class="footer-copy">© 2025, All rights reserved · Made in India 🇮🇳</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="#">About</a>
+        <a href="#">Sales</a>
+        <a href="#">Terms &amp; Conditions</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Cancellations &amp; Refunds</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Usecases</div>
+        <a href="#">Founders</a>
+        <a href="#">Managers</a>
+        <a href="#">QA Developers</a>
+        <a href="#">Developers</a>
+        <a href="#">Support Team</a>
+        <a href="#">Comparisions</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Resources</div>
+        <a href="#">Docs</a>
+        <a href="#">Blogs</a>
+        <a href="#">Support</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Socials</div>
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">Twitter / X</a>
+        <div style="margin-top:16px">
+          <div class="footer-col-title">Compliance</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span class="footer-badge">SOC2 Type II</span>
+            <span class="footer-badge">ISO 27001</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Mobile menu
+function toggleMenu(){
+  const m=document.getElementById('mobileMenu');
+  m.style.display=m.style.display==='flex'?'none':'flex';
+}
+
+// Scroll reveal
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible')}});
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// FAQ toggle
+function toggleFaq(item){
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen)item.classList.add('open');
+}
+
+// Role tabs
+const roles=[
+  {title:'Founders',desc:'Get full visibility into product quality. Make data-driven decisions on what to fix first and ship faster.',list:['Faster Product Iteration','Clarity on What\'s Broken','Prioritize issues based on impact']},
+  {title:'Software Developers',desc:'Spend less time asking for more info and more time writing code. Get complete bug reports with console logs.',list:['Complete reproduction steps','Console logs & network info','Direct integration with your IDE']},
+  {title:'Quality Engineers',desc:'Streamline your QA process with powerful capture tools and automatic documentation.',list:['Test case documentation','Regression tracking','Automated screenshots on failure']},
+  {title:'UI/UX Designers',desc:'Capture visual bugs with precision. Annotate screenshots and share design feedback instantly.',list:['Pixel-perfect annotations','Design comparison tools','Direct Figma integration']},
+  {title:'Support Teams',desc:'Help customers resolve issues faster by capturing their problems with complete context.',list:['Customer screen capture','Session replay','Automatic metadata collection']},
+];
+function setRole(idx){
+  document.querySelectorAll('.role-tab').forEach((t,i)=>{
+    t.classList.toggle('active',i===idx);
+  });
+  const r=roles[idx];
+  document.getElementById('rcTitle').textContent=r.title;
+  document.getElementById('rcDesc').textContent=r.desc;
+  const ul=document.getElementById('rcList');
+  ul.innerHTML=r.list.map(l=>`<li>${l}</li>`).join('');
+}
+
+// Nav scroll effect
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('navbar');
+  nav.style.background=window.scrollY>60?'rgba(18,22,21,0.95)':'rgba(28,34,33,0.75)';
+});
+</script>
+</body>
+</html>
